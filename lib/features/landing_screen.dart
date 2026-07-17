@@ -12,6 +12,31 @@ class LandingScreen extends StatefulWidget {
 class _LandingScreenState extends State<LandingScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text("Landing Screen")));
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("ChatX"),
+        centerTitle: true,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: CircleAvatar(
+              radius: 18,
+              backgroundColor: Colors.grey.shade200,
+              backgroundImage:
+                  (widget.user.photoURL != null &&
+                      widget.user.photoURL!.isNotEmpty)
+                  ? NetworkImage(widget.user.photoURL!)
+                  : null,
+              child:
+                  (widget.user.photoURL == null ||
+                      widget.user.photoURL!.isEmpty)
+                  ? const Icon(Icons.person, color: Colors.grey)
+                  : null,
+            ),
+          ),
+        ],
+      ),
+      body: Center(child: Text("Landing Screen")),
+    );
   }
 }

@@ -1,5 +1,4 @@
 import 'package:chatx/core/sevices/firebase_auth_wrapper.dart';
-import 'package:chatx/core/splash_screen.dart';
 import 'package:chatx/core/theme.dart';
 import 'package:chatx/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';

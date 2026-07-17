@@ -7,6 +7,6 @@ class Secret {
   static const String apiKey =
       'AQ.Ab8RN6JTgQ_cVLEkicRUjF8Bawhjx13xUFIYB2fivNJVvBJq8g';
 
-  static const String chatEndpoint =
+  static const String Endpointurl =
       '$baseUrl/models/gemini-3.5-flash:generateContent';
 }
