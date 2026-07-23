@@ -9,7 +9,8 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
   late Animation<double> _opacityAnimation;
@@ -17,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   @override
   void initState() {
     super.initState();
-    
+
     // 1. Initialize the animation controller
     _animationController = AnimationController(
       vsync: this,
@@ -60,14 +61,14 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
   @override
   void dispose() {
-    _animationController.dispose(); // Always clean up your animation controllers
+    _animationController
+        .dispose(); // Always clean up your animation controllers
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -84,7 +85,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
               ),
             ),
             const SizedBox(height: 32),
-            
+
             // Subtitles
             const Text(
               "Your intelligent AI assistant",
@@ -107,18 +108,18 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           ],
         ),
       ),
-      bottomNavigationBar: const SafeArea(
-        child: Padding(
-          padding: EdgeInsets.only(bottom: 16.0),
-          child: Text(
-            'Developed by Vallarasu',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white38, 
-              fontSize: 12,
-              letterSpacing: 1.0,
-              fontWeight: FontWeight.w500,
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          decoration: BoxDecoration(
+            border: Border(
+              top: BorderSide(color: Colors.grey.shade300, width: 0.5),
             ),
+          ),
+          child: const Text(
+            "Developed by Dev Srini • Powered by Gemini AI",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 11, color: Colors.grey),
           ),
         ),
       ),

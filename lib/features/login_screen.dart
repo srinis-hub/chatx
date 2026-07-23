@@ -137,6 +137,27 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ),
+       bottomNavigationBar: SafeArea(
+  child: Container(
+    padding: const EdgeInsets.symmetric(vertical: 8),
+    decoration: BoxDecoration(
+      border: Border(
+        top: BorderSide(
+          color: Colors.grey.shade300,
+          width: 0.5,
+        ),
+      ),
+    ),
+    child: const Text(
+      "Developed by Dev Srini • Powered by Gemini AI",
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        fontSize: 12,
+        color: Colors.grey,
+      ),
+    ),
+  ),
+),
     );
   }
 }

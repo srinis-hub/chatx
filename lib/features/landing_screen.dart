@@ -1,3 +1,5 @@
+import 'package:chatx/core/sevices/datasources.dart';
+import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +12,75 @@ class LandingScreen extends StatefulWidget {
 }
 
 class _LandingScreenState extends State<LandingScreen> {
+ 
+  late String myUserName;
+  late ChatUser myUser;
+  late ChatUser chatx;
+  List<ChatMessage> messages = [];
+  final TextEditingController _chatController = TextEditingController();
+  List<Map<String, dynamic>> chatHistory = [];
+  String responseText = 'Welcome to ChatZ! Ask me anything.';
+
+  @override
+  void initState() {
+    super.initState();
+    myUserName = widget.user.displayName ?? "User";
+    myUser = ChatUser(id: "1", firstName: myUserName);
+    chatx = ChatUser(id: "2", firstName: "Chatx", lastName: "AI");
+    // messages.insert(
+    //   0,
+    //   ChatMessage(createdAt: DateTime.now(), text: "Hi ChatX", user: myUser),
+    // );
+    // messages.insert(
+    //   0,
+    //   ChatMessage(
+    //     createdAt: DateTime.now(),
+    //     text: "Hi Buddy, How Can i Help U today,",
+    //     user: chatx,
+    //   ),
+    // );
+  }
+
+  dynamic askGemini() async {
+    var input = _chatController.text;
+
+    chatHistory.add({
+      'role': 'user',
+      'parts': [
+        {'text': input},
+      ],
+    });
+
+    messages.insert(
+      0,
+      ChatMessage(createdAt: DateTime.now(), text: input, user: myUser),
+    );
+    setState(() {
+      messages;
+    });
+    _chatController.clear();
+
+    final responseText = await DataSources.askGemini(chatHistory);
+    chatHistory.add({
+      'role': 'model',
+      'parts': [
+        {'text': responseText},
+      ],
+    });
+
+    messages.insert(
+      0,
+      ChatMessage(createdAt: DateTime.now(), text: responseText, user: chatx),
+    );
+    setState(() {
+      // isLoading = false;
+      messages;
+    });
+    // if (isSpeaking) {
+    //   flutterTts.speak(responseText);
+    // }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,21 +93,84 @@ class _LandingScreenState extends State<LandingScreen> {
             child: CircleAvatar(
               radius: 18,
               backgroundColor: Colors.grey.shade200,
-              backgroundImage:
-                  (widget.user.photoURL != null &&
-                      widget.user.photoURL!.isNotEmpty)
-                  ? NetworkImage(widget.user.photoURL!)
-                  : null,
-              child:
-                  (widget.user.photoURL == null ||
-                      widget.user.photoURL!.isEmpty)
-                  ? const Icon(Icons.person, color: Colors.grey)
-                  : null,
+              child: ClipOval(
+                child:
+                    widget.user.photoURL != null &&
+                        widget.user.photoURL!.isNotEmpty
+                    ? Image.network(
+                        widget.user.photoURL!,
+                        width: 36,
+                        height: 36,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(Icons.person, color: Colors.grey);
+                        },
+                        loadingBuilder: (context, child, progress) {
+                          if (progress == null) return child;
+                          return const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          );
+                        },
+                      )
+                    : const Icon(Icons.person, color: Colors.grey),
+              ),
             ),
           ),
         ],
       ),
-      body: Center(child: Text("Landing Screen")),
+      body: Column(
+        children: [
+          Expanded(
+            child: Center(
+              child: DashChat(
+                messageListOptions: MessageListOptions(),
+                messageOptions: MessageOptions(
+                  // showCurrentUserAvatar: true,
+                  // showOtherUsersName: true
+                ),
+                messages: messages,
+                onSend: (m) {},
+                currentUser: myUser,
+                readOnly: true,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 14, top: 8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _chatController,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: "Ask me anything...",
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    askGemini();
+                  },
+                  icon: Icon(Icons.send, color: Theme.of(context).primaryColor),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 8, top: 4),
+          child: Text(
+            "ChatX responses may contain inaccuracies.",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 12, color: Colors.grey),
+          ),
+        ),
+      ),
     );
   }
 }
