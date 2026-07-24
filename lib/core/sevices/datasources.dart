@@ -15,8 +15,7 @@ class DataSources {
         'Content-Type': 'application/json',
       },
 
-      body: jsonEncode({ 
-
+      body: jsonEncode({
         "contents": chatHistory,
         "generationConfig": {
           "thinkingConfig": {"thinkingBudget": 0},
