@@ -1,4 +1,5 @@
 import 'package:chatx/core/sevices/datasources.dart';
+import 'package:chatx/features/profile_screen.dart';
 import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,6 @@ class LandingScreen extends StatefulWidget {
 }
 
 class _LandingScreenState extends State<LandingScreen> {
- 
   late String myUserName;
   late ChatUser myUser;
   late ChatUser chatx;
@@ -27,18 +27,6 @@ class _LandingScreenState extends State<LandingScreen> {
     myUserName = widget.user.displayName ?? "User";
     myUser = ChatUser(id: "1", firstName: myUserName);
     chatx = ChatUser(id: "2", firstName: "Chatx", lastName: "AI");
-    // messages.insert(
-    //   0,
-    //   ChatMessage(createdAt: DateTime.now(), text: "Hi ChatX", user: myUser),
-    // );
-    // messages.insert(
-    //   0,
-    //   ChatMessage(
-    //     createdAt: DateTime.now(),
-    //     text: "Hi Buddy, How Can i Help U today,",
-    //     user: chatx,
-    //   ),
-    // );
   }
 
   dynamic askGemini() async {
@@ -93,30 +81,42 @@ class _LandingScreenState extends State<LandingScreen> {
             child: CircleAvatar(
               radius: 18,
               backgroundColor: Colors.grey.shade200,
-              child: ClipOval(
-                child:
-                    widget.user.photoURL != null &&
-                        widget.user.photoURL!.isNotEmpty
-                    ? Image.network(
-                        widget.user.photoURL!,
-                        width: 36,
-                        height: 36,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(Icons.person, color: Colors.grey);
-                        },
-                        loadingBuilder: (context, child, progress) {
-                          if (progress == null) return child;
-                          return const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          );
-                        },
-                      )
-                    : const Icon(Icons.person, color: Colors.grey),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>  ProfileScreen(user: widget.user,),
+                    ),
+                  );
+                },
+                child: ClipOval(
+                  child:
+                      widget.user.photoURL != null &&
+                          widget.user.photoURL!.isNotEmpty
+                      ? Image.network(
+                          widget.user.photoURL!,
+                          width: 36,
+                          height: 36,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Icon(Icons.person, color: Colors.grey);
+                          },
+                          loadingBuilder: (context, child, progress) {
+                            if (progress == null) return child;
+                            return const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            );
+                          },
+                        )
+                      : const Icon(Icons.person, color: Colors.grey),
+                ),
               ),
             ),
+          
+          
           ),
         ],
       ),
