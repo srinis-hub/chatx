@@ -9,4 +9,5 @@ class Secret {
 
   static const String Endpointurl =
       '$baseUrl/models/gemini-3.5-flash:generateContent';
+
 }

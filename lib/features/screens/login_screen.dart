@@ -1,6 +1,6 @@
 import 'package:chatx/core/media_query.dart';
 import 'package:chatx/core/sevices/google_auth_service.dart';
-import 'package:chatx/features/landing_screen.dart';
+import 'package:chatx/features/screens/landing_screen.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {

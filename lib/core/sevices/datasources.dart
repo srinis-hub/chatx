@@ -1,11 +1,14 @@
 import 'dart:convert';
 
 import 'package:chatx/config/secret.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart';
 
 class DataSources {
   static Future<String> askGemini(
     List<Map<String, dynamic>> chatHistory,
+    String systemInstruction,
   ) async {
     final response = await post(
       Uri.parse(Secret.Endpointurl),
@@ -17,6 +20,11 @@ class DataSources {
 
       body: jsonEncode({
         "contents": chatHistory,
+        "system_instruction": {
+          "parts": [
+            {"text": systemInstruction},
+          ],
+        },
         "generationConfig": {
           "thinkingConfig": {"thinkingBudget": 0},
         },
@@ -35,6 +43,30 @@ class DataSources {
       return "No response from Gemini.";
     } else {
       return "Facing Issue: ${response.statusCode}";
+    }
+  }
+
+  static Future<void> updateAssistantBehavior({
+    required bool isdefault,
+    required User user,
+    required String assistantName,
+    required String systemInstruction,
+  }) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('assistant_behavior')
+          .doc('config')
+          .collection('history')
+          .add({
+            'assistantName': assistantName.trim(),
+            'systemInstruction': systemInstruction.trim(),
+            'changedAt': FieldValue.serverTimestamp(),
+            'isDefault': isdefault,
+          });
+    } catch (e) {
+      rethrow;
     }
   }
 }

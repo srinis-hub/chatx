@@ -1,5 +1,5 @@
 import 'package:chatx/core/media_query.dart';
-import 'package:chatx/features/login_screen.dart';
+import 'package:chatx/features/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {

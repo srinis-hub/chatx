@@ -1,11 +1,13 @@
 import 'package:chatx/core/sevices/datasources.dart';
-import 'package:chatx/features/profile_screen.dart';
+import 'package:chatx/features/screens/profile_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class LandingScreen extends StatefulWidget {
   final User user;
+
   const LandingScreen({super.key, required this.user});
 
   @override
@@ -16,6 +18,7 @@ class _LandingScreenState extends State<LandingScreen> {
   late String myUserName;
   late ChatUser myUser;
   late ChatUser chatx;
+  String systemInstruction = "You are a helpful AI assistant.";
   List<ChatMessage> messages = [];
   final TextEditingController _chatController = TextEditingController();
   List<Map<String, dynamic>> chatHistory = [];
@@ -26,7 +29,8 @@ class _LandingScreenState extends State<LandingScreen> {
     super.initState();
     myUserName = widget.user.displayName ?? "User";
     myUser = ChatUser(id: "1", firstName: myUserName);
-    chatx = ChatUser(id: "2", firstName: "Chatx", lastName: "AI");
+    chatx = ChatUser(id: "2", firstName: "ChatX");
+    loadAssistantBehavior(widget.user);
   }
 
   dynamic askGemini() async {
@@ -48,7 +52,10 @@ class _LandingScreenState extends State<LandingScreen> {
     });
     _chatController.clear();
 
-    final responseText = await DataSources.askGemini(chatHistory);
+    final responseText = await DataSources.askGemini(
+      chatHistory,
+      "your name is ${chatx.firstName}, and you are a $systemInstruction",
+    );
     chatHistory.add({
       'role': 'model',
       'parts': [
@@ -69,6 +76,31 @@ class _LandingScreenState extends State<LandingScreen> {
     // }
   }
 
+  Future<void> loadAssistantBehavior(User user) async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('assistant_behavior')
+          .doc("config")
+          .collection("history")
+          .orderBy('changedAt', descending: true)
+          .limit(1)
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        final data = snapshot.docs.first.data();
+
+        chatx.firstName = data['assistantName'] ?? "ChatX";
+
+        systemInstruction =
+            data['systemInstruction'] ?? "You are a helpful AI assistant.";
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,7 +118,7 @@ class _LandingScreenState extends State<LandingScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>  ProfileScreen(user: widget.user,),
+                      builder: (context) => ProfileScreen(user: widget.user),
                     ),
                   );
                 },
@@ -115,8 +147,6 @@ class _LandingScreenState extends State<LandingScreen> {
                 ),
               ),
             ),
-          
-          
           ),
         ],
       ),

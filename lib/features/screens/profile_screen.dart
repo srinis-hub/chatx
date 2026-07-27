@@ -1,6 +1,8 @@
 import 'package:chatx/core/media_query.dart';
 import 'package:chatx/core/sevices/google_auth_service.dart';
-import 'package:chatx/features/login_screen.dart';
+import 'package:chatx/features/screens/behavior_screen.dart';
+import 'package:chatx/features/screens/login_screen.dart';
+import 'package:chatx/features/widgets/behavior_tile.dart';
 import 'package:chatx/features/widgets/profile_tile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -26,7 +28,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: 40,),
+                SizedBox(height: 40),
                 InkWell(
                   onTap: () {
                     Navigator.pop(context);
@@ -38,14 +40,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        icon: const Icon(CupertinoIcons.back, size: 30),                    
+                        icon: const Icon(CupertinoIcons.back, size: 30),
                         color: Colors.black,
                       ),
-                      Text("Back",style: TextStyle(fontWeight: FontWeight.w500,fontSize: 24,color: Colors.black),)
+                      Text(
+                        "Back",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 24,
+                          color: Colors.black,
+                        ),
+                      ),
                     ],
                   ),
                 ),
-        SizedBox(height: 20,),
+                SizedBox(height: 20),
                 CircleAvatar(
                   radius: context.height(0.05),
                   backgroundColor: Colors.grey.shade200,
@@ -59,14 +68,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             height: context.height(0.097),
                             fit: BoxFit.fill,
                             errorBuilder: (context, error, stackTrace) {
-                              return const Icon(Icons.person, color: Colors.grey);
+                              return const Icon(
+                                Icons.person,
+                                color: Colors.grey,
+                              );
                             },
                             loadingBuilder: (context, child, progress) {
                               if (progress == null) return child;
                               return const SizedBox(
                                 width: 50,
                                 height: 50,
-                                child: CircularProgressIndicator(strokeWidth: 2),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
                               );
                             },
                           )
@@ -74,6 +88,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
                 SizedBox(height: 20),
+
                 Text(
                   widget.user.displayName ?? "User",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 34),
@@ -87,6 +102,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     color: Colors.black87,
                   ),
                 ),
+
+                SizedBox(height: 20),
+                AIBehaviorTile(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => BehaviorScreen(user: widget.user),
+                      ),
+                    );
+                  },
+                ),
+                SizedBox(height: 20),
                 ProfileTile(
                   title: "About Developer",
                   icon: Icons.code_rounded,
@@ -103,14 +131,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Text("• Flutter"),
                     SizedBox(height: 2),
                     Text("• Google Gemini AI"),
-        
+
                     SizedBox(height: 2),
                     Text("• Firebase Authentication"),
                     SizedBox(height: 2),
                     Text("• Cloud Firestore"),
                   ],
                 ),
-        
+
                 ProfileTile(
                   title: "Privacy Policy",
                   icon: Icons.privacy_tip_rounded,
@@ -133,7 +161,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Text("Powered by Gemini AI for intelligent conversations."),
                   ],
                 ),
-        
+
                 ProfileTile(
                   title: "Settings",
                   icon: Icons.settings,
@@ -146,7 +174,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: ElevatedButton.icon(
                         onPressed: () async {
                           await authService.signOut();
-        
+
                           Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(

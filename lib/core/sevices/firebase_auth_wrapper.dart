@@ -1,6 +1,6 @@
 import 'package:chatx/core/splash_screen.dart';
-import 'package:chatx/features/landing_screen.dart';
-import 'package:chatx/features/login_screen.dart';
+import 'package:chatx/features/screens/landing_screen.dart';
+import 'package:chatx/features/screens/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
