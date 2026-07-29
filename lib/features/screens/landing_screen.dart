@@ -18,6 +18,7 @@ class _LandingScreenState extends State<LandingScreen> {
   late String myUserName;
   late ChatUser myUser;
   late ChatUser chatx;
+  // int localTokenCount = 0;
   String systemInstruction = "You are a helpful AI assistant.";
   List<ChatMessage> messages = [];
   final TextEditingController _chatController = TextEditingController();
@@ -65,12 +66,18 @@ class _LandingScreenState extends State<LandingScreen> {
 
     messages.insert(
       0,
-      ChatMessage(createdAt: DateTime.now(), text: responseText, user: chatx),
+      ChatMessage(
+        createdAt: DateTime.now(),
+        text: responseText,
+        user: chatx,
+      ),
     );
+
     setState(() {
       // isLoading = false;
       messages;
     });
+    // print(localTokenCount);
     // if (isSpeaking) {
     //   flutterTts.speak(responseText);
     // }
@@ -101,6 +108,7 @@ class _LandingScreenState extends State<LandingScreen> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -118,7 +126,10 @@ class _LandingScreenState extends State<LandingScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ProfileScreen(user: widget.user),
+                      builder: (context) => ProfileScreen(
+                        user: widget.user,
+                        // localTokenCount: localTokenCount,
+                      ),
                     ),
                   );
                 },

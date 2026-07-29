@@ -2,6 +2,7 @@ import 'package:chatx/core/media_query.dart';
 import 'package:chatx/core/sevices/google_auth_service.dart';
 import 'package:chatx/features/screens/behavior_screen.dart';
 import 'package:chatx/features/screens/login_screen.dart';
+import 'package:chatx/features/screens/subcription_screen.dart';
 import 'package:chatx/features/widgets/behavior_tile.dart';
 import 'package:chatx/features/widgets/profile_tile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,7 +11,7 @@ import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatefulWidget {
   final User user;
-  const ProfileScreen({super.key, required this.user});
+  const ProfileScreen({super.key, required this.user,});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -105,15 +106,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 SizedBox(height: 20),
                 AIBehaviorTile(
+                  icon: Icon(
+                    Icons.psychology_alt_outlined,
+                    color: Theme.of(context).primaryColor,
+                  ),
+
+                  subTitle: "Customize how your AI assistant responds",
+                  title: "AI Behavior",
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => BehaviorScreen(user: widget.user),
+                        builder: (_) => SubscriptionScreen(),
+                        // BehaviorScreen(user: widget.user),
                       ),
                     );
                   },
                 ),
+
+                AIBehaviorTile(
+                  icon: Icon(
+                    Icons.token_outlined,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  title: "Tokens",
+                  subTitle: "Manage your AI token usage and limits",
+                  onTap: () {
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (_) => TokenScreen(user: widget.user,localTokenCount: widget.localTokenCount,),
+                    //   ),
+                    // );
+                  },
+                ),
+
                 SizedBox(height: 20),
                 ProfileTile(
                   title: "About Developer",

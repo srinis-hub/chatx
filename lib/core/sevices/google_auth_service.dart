@@ -1,7 +1,5 @@
-import 'package:chatx/config/app_config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class GoogleAuthService {
@@ -48,19 +46,19 @@ class GoogleAuthService {
     }, SetOptions(merge: true));
 
     await FirebaseFirestore.instance
-    .collection('users')
-    .doc(user.uid)
-    .collection('assistant_behavior')
-    .doc('config')
-    .set({
-      'assistantName': "chatx",
-      'systemInstruction': "You are a helpful AI assistant.",
-      'updatedAt': FieldValue.serverTimestamp(),
-      'isDefault': true,
-    });
+        .collection('users')
+        .doc(user.uid)
+        .collection('assistant_behavior')
+        .doc('config')
+        .set({
+          'assistantName': "chatx",
+          'systemInstruction': "You are a helpful AI assistant.",
+          'updatedAt': FieldValue.serverTimestamp(),
+          'isDefault': true,
+        });
+
+  
   }
-
-
 
   Future<void> signOut() async {
     await _googleSignIn.signOut();
