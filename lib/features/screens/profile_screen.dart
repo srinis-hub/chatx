@@ -5,20 +5,45 @@ import 'package:chatx/features/screens/login_screen.dart';
 import 'package:chatx/features/screens/subcription_screen.dart';
 import 'package:chatx/features/widgets/behavior_tile.dart';
 import 'package:chatx/features/widgets/profile_tile.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatefulWidget {
   final User user;
-  const ProfileScreen({super.key, required this.user,});
+  const ProfileScreen({super.key, required this.user});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  bool isPrimeUser = false;
+
   final GoogleAuthService authService = GoogleAuthService();
+
+  @override
+  void initState() {
+    getSubscriptionDetails();
+    super.initState();
+  }
+
+  Future<void> getSubscriptionDetails() async {
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.user.uid)
+        .collection('subcription')
+        .doc('config')
+        .get();
+
+    if (!mounted) return;
+
+    setState(() {
+      isPrimeUser = doc.data()?['isPremium'] ?? false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -113,14 +138,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   subTitle: "Customize how your AI assistant responds",
                   title: "AI Behavior",
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => SubscriptionScreen(),
-                        // BehaviorScreen(user: widget.user),
-                      ),
-                    );
+                  onTap: () async {
+                    if (isPrimeUser) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => BehaviorScreen(user: widget.user),
+                        ),
+                      );
+                    } else {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => SubscriptionScreen(user: widget.user),
+                        ),
+                      );
+
+                      if (result == true) {
+                        await getSubscriptionDetails();
+                      }
+                    }
                   },
                 ),
 
@@ -132,15 +169,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   title: "Tokens",
                   subTitle: "Manage your AI token usage and limits",
                   onTap: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (_) => TokenScreen(user: widget.user,localTokenCount: widget.localTokenCount,),
-                    //   ),
-                    // );
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        icon: const Icon(Icons.token_outlined, size: 48),
+                        title: const Text("Coming Soon"),
+                        content: const Text(
+                          "Token management is currently unavailable. "
+                          "This feature will be introduced in a future update.",
+                          textAlign: TextAlign.center,
+                        ),
+                        actions: [
+                          FilledButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text("OK"),
+                          ),
+                        ],
+                      ),
+                    );
                   },
                 ),
-
                 SizedBox(height: 20),
                 ProfileTile(
                   title: "About Developer",

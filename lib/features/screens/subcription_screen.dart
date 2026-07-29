@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SubscriptionScreen extends StatefulWidget {
-  const SubscriptionScreen({super.key});
+  final User user;
+  const SubscriptionScreen({super.key, required this.user});
 
   @override
   State<SubscriptionScreen> createState() => _SubscriptionScreenState();
@@ -9,6 +12,21 @@ class SubscriptionScreen extends StatefulWidget {
 
 class _SubscriptionScreenState extends State<SubscriptionScreen> {
   static const Color premiumColor = Color(0xFF6C63FF);
+
+  Future<void> updateSubcription() async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.user.uid)
+        .collection('subcription')
+        .doc('config')
+        .set({
+          'isPremium': true,
+          'premiumPurchasedAt': FieldValue.serverTimestamp(),
+          "premiumType": "lifetime",
+        });
+
+        Navigator.pop(context, true);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,15 +132,16 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     ),
                     const SizedBox(height: 15),
                     Text(
-                      "₹299",
+                      "₹ 23.45",
                       style: theme.textTheme.displaySmall?.copyWith(
                         fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
                     ),
                     const SizedBox(height: 6),
                     const Text(
                       "Pay once. Use forever.",
-                      style: TextStyle(fontSize: 16,color: Colors.white),
+                      style: TextStyle(fontSize: 16, color: Colors.white),
                     ),
                   ],
                 ),
@@ -135,6 +154,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 height: 56,
                 child: FilledButton.icon(
                   onPressed: () {
+                    updateSubcription();
                     // TODO: Razorpay / Play Billing
                   },
                   icon: const Icon(Icons.lock_open),
