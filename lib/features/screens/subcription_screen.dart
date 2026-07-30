@@ -1,6 +1,8 @@
+import 'package:chatx/core/sevices/razorpay_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class SubscriptionScreen extends StatefulWidget {
   final User user;
@@ -12,8 +14,60 @@ class SubscriptionScreen extends StatefulWidget {
 
 class _SubscriptionScreenState extends State<SubscriptionScreen> {
   static const Color premiumColor = Color(0xFF6C63FF);
+  late RazorpayService _razorpayService;
 
-  Future<void> updateSubcription() async {
+  @override
+  void initState() {
+    super.initState();
+
+    _razorpayService = RazorpayService(
+      onSuccess: _handlePaymentSuccess,
+      onFailure: _handlePaymentFailure,
+      onWallet: _handleExternalWallet,
+    );
+  }
+
+  Future<void> _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    print(response.paymentId);
+    print(response.orderId);
+    print(response.signature);
+
+    await updateSubcription(
+      response.orderId ?? "default",
+      response.signature ?? "default",
+      response.paymentId ?? "default",
+    );
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text("Premium Activated 🎉")));
+  }
+
+  void _handlePaymentFailure(PaymentFailureResponse response) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(response.message ?? "Payment Failed")),
+    );
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text("Wallet: ${response.walletName}")));
+  }
+
+  @override
+  void dispose() {
+    _razorpayService.dispose();
+    super.dispose();
+  }
+
+  Future<void> updateSubcription(
+    String orderId,
+    String signature,
+    String paymentId,
+  ) async {
     await FirebaseFirestore.instance
         .collection('users')
         .doc(widget.user.uid)
@@ -25,7 +79,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           "premiumType": "lifetime",
         });
 
-        Navigator.pop(context, true);
+    Navigator.pop(context, true);
   }
 
   @override
@@ -132,7 +186,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     ),
                     const SizedBox(height: 15),
                     Text(
-                      "₹ 23.45",
+                      "₹ 23",
                       style: theme.textTheme.displaySmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -154,8 +208,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 height: 56,
                 child: FilledButton.icon(
                   onPressed: () {
-                    updateSubcription();
-                    // TODO: Razorpay / Play Billing
+                    _razorpayService.openCheckout(
+                      amount: 23,
+                      name: "ChatX Premium",
+                      description: "Lifetime Premium Membership",
+                      email: widget.user.email ?? "",
+                      contact: "",
+                    );
                   },
                   icon: const Icon(Icons.lock_open),
                   label: const Text(
