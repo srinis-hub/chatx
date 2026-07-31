@@ -14,6 +14,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "686870364430-65gal0a2u5vfcrbthgiuf9ccoa4kdb2n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vallarasu.chatx",
+            "certificate_hash": "e26e263c670e08a422a52acbb576597eb094c6bd"
+          }
+        },
+        {
+          "client_id": "686870364430-vikpien4shbu81hfsh830hjq57etlha8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vallarasu.chatx",
+            "certificate_hash": "3886bec6fa8f63411c49c88ead02c6e804f0761e"
+          }
+        },
+        {
           "client_id": "686870364430-l1t4cpp5f9h57ekds1mg4ppqkklm9gg5.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,6 +45,13 @@
             {
               "client_id": "686870364430-l1t4cpp5f9h57ekds1mg4ppqkklm9gg5.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "686870364430-numg9ti82979j4cuvkva1a32mp1a20m3.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.vallarasu.chatx"
+              }
             }
           ]
         }
