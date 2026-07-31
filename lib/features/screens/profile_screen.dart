@@ -7,7 +7,6 @@ import 'package:chatx/features/widgets/behavior_tile.dart';
 import 'package:chatx/features/widgets/profile_tile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatefulWidget {

@@ -2,6 +2,7 @@ import 'package:chatx/core/media_query.dart';
 import 'package:chatx/core/sevices/google_auth_service.dart';
 import 'package:chatx/features/screens/landing_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -12,6 +13,17 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final GoogleAuthService _authService = GoogleAuthService();
+
+  Future<void> openPrivacyPolicy() async {
+    final Uri url = Uri.parse(
+      "https://srinis-hub.github.io/chatx-privacy-policy/",
+    );
+
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      throw Exception("Could not launch $url");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,7 +52,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 20),
                 Image.asset('assets/chatx.png', width: context.width(0.3)),
-                  
                 SizedBox(height: context.height(0.1)),
                 Text(
                   "Your intelligent AI assistant",
@@ -61,7 +72,31 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 SizedBox(height: context.height(0.2)),
-                  
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                    children: [
+                      const TextSpan(text: "By continuing, you agree to our "),
+                      WidgetSpan(
+                        alignment: PlaceholderAlignment.middle,
+                        child: GestureDetector(
+                          onTap: openPrivacyPolicy,
+                          child: Text(
+                            "Privacy Policy",
+                            style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.w600,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const TextSpan(text: "."),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 50),
                   width: double.infinity,
@@ -70,16 +105,16 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: () async {
                       try {
                         final user = await _authService.signInWithGoogle();
-                  
+
                         if (!mounted) return;
-                  
+
                         if (user != null) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text("Welcome ${user.displayName}"),
                             ),
                           );
-                  
+
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
@@ -89,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         }
                       } catch (e) {
                         if (!mounted) return;
-                  
+
                         ScaffoldMessenger.of(
                           context,
                         ).showSnackBar(SnackBar(content: Text(e.toString())));

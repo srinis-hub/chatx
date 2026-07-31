@@ -18,7 +18,8 @@ class _LandingScreenState extends State<LandingScreen> {
   late String myUserName;
   late ChatUser myUser;
   late ChatUser chatx;
-  // int localTokenCount = 0;
+  bool _isAiTyping = false;
+
   String systemInstruction = "You are a helpful AI assistant.";
   List<ChatMessage> messages = [];
   final TextEditingController _chatController = TextEditingController();
@@ -34,8 +35,10 @@ class _LandingScreenState extends State<LandingScreen> {
     loadAssistantBehavior(widget.user);
   }
 
-  dynamic askGemini() async {
-    var input = _chatController.text;
+  Future<void> askGemini() async {
+    var input = _chatController.text.trim();
+
+    if (input.isEmpty) return;
 
     chatHistory.add({
       'role': 'user',
@@ -48,39 +51,44 @@ class _LandingScreenState extends State<LandingScreen> {
       0,
       ChatMessage(createdAt: DateTime.now(), text: input, user: myUser),
     );
-    setState(() {
-      messages;
-    });
+
     _chatController.clear();
 
-    final responseText = await DataSources.askGemini(
-      chatHistory,
-      "your name is ${chatx.firstName}, and you are a $systemInstruction",
-    );
-    chatHistory.add({
-      'role': 'model',
-      'parts': [
-        {'text': responseText},
-      ],
-    });
-
-    messages.insert(
-      0,
-      ChatMessage(
-        createdAt: DateTime.now(),
-        text: responseText,
-        user: chatx,
-      ),
-    );
-
     setState(() {
-      // isLoading = false;
-      messages;
+      _isAiTyping = true;
     });
-    // print(localTokenCount);
-    // if (isSpeaking) {
-    //   flutterTts.speak(responseText);
-    // }
+
+    try {
+      final responseText = await DataSources.askGemini(
+        chatHistory,
+        "your name is ${chatx.firstName}, and you are a $systemInstruction",
+      );
+
+      chatHistory.add({
+        'role': 'model',
+        'parts': [
+          {'text': responseText},
+        ],
+      });
+
+      messages.insert(
+        0,
+        ChatMessage(createdAt: DateTime.now(), text: responseText, user: chatx),
+      );
+    } catch (e) {
+      messages.insert(
+        0,
+        ChatMessage(
+          createdAt: DateTime.now(),
+          text: "Sorry, something went wrong.",
+          user: chatx,
+        ),
+      );
+    } finally {
+      setState(() {
+        _isAiTyping = false;
+      });
+    }
   }
 
   Future<void> loadAssistantBehavior(User user) async {
@@ -107,7 +115,6 @@ class _LandingScreenState extends State<LandingScreen> {
       debugPrint(e.toString());
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -166,15 +173,32 @@ class _LandingScreenState extends State<LandingScreen> {
           Expanded(
             child: Center(
               child: DashChat(
-                messageListOptions: MessageListOptions(),
-                messageOptions: MessageOptions(
-                  // showCurrentUserAvatar: true,
-                  // showOtherUsersName: true
-                ),
                 messages: messages,
-                onSend: (m) {},
                 currentUser: myUser,
                 readOnly: true,
+                onSend: (_) {},
+                typingUsers: _isAiTyping ? [chatx] : [],
+                messageListOptions: MessageListOptions(
+                  typingBuilder: (user) {
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 16, bottom: 12),
+                      child: Row(
+                        children: [
+                          const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            "${user.firstName} is thinking...",
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ),

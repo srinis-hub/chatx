@@ -28,10 +28,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }
 
   Future<void> _handlePaymentSuccess(PaymentSuccessResponse response) async {
-    print(response.paymentId);
-    print(response.orderId);
-    print(response.signature);
-
     await updateSubcription(
       response.orderId ?? "default",
       response.signature ?? "default",
@@ -231,7 +227,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
               TextButton(
                 onPressed: () {
-                  // TODO: Restore Purchases
+                
                 },
                 child: const Text("Restore Purchases"),
               ),

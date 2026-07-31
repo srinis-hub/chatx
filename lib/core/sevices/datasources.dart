@@ -30,7 +30,6 @@ class DataSources {
         },
       }),
     );
-    print(response.body.toString());
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);

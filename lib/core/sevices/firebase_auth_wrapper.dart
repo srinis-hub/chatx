@@ -13,15 +13,12 @@ class AuthWrapper extends StatelessWidget {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          print("Loading");
           return const SplashScreen();
         }
 
         if (snapshot.hasData) {
-          print("Loaded");
           return LandingScreen(user: snapshot.data!);
         }
-        print("Loaded");
         return const LoginScreen();
       },
     );
