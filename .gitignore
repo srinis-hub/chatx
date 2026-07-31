@@ -34,6 +34,8 @@ migrate_working_dir/
 /coverage/
 # Secrets
 lib/config/secret.dart
+android/key.properties
+android/app/chatx-release-key.jks
 
 # Symbolication related
 app.*.symbols
