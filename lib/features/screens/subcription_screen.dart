@@ -64,7 +64,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }
 
   Future<void> updateSubcription(
-    String orderId,
+    String getOrderId,
     String signature,
     String paymentId,
   ) async {
@@ -77,6 +77,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           'isPremium': true,
           'premiumPurchasedAt': FieldValue.serverTimestamp(),
           "premiumType": "lifetime",
+          "orderId": getOrderId,
+          "signature": signature,
+          "paymentId": paymentId,
         });
 
     Navigator.pop(context, true);

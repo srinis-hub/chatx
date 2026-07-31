@@ -47,6 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: const Text("Profile"), centerTitle: false),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -54,33 +55,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: 40),
-                InkWell(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: const Icon(CupertinoIcons.back, size: 30),
-                        color: Colors.black,
-                      ),
-                      Text(
-                        "Back",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 24,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 20),
                 CircleAvatar(
                   radius: context.height(0.05),
                   backgroundColor: Colors.grey.shade200,
@@ -203,14 +177,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   title: "Technology Used",
                   icon: Icons.memory_rounded,
                   children: const [
-                    Text("• Flutter"),
+                    Text("Flutter"),
                     SizedBox(height: 2),
-                    Text("• Google Gemini AI"),
+                    Text("Google Gemini AI"),
 
                     SizedBox(height: 2),
-                    Text("• Firebase Authentication"),
+                    Text("Firebase Authentication"),
                     SizedBox(height: 2),
-                    Text("• Cloud Firestore"),
+                    Text("Cloud Firestore"),
                   ],
                 ),
 
@@ -218,11 +192,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   title: "Privacy Policy",
                   icon: Icons.privacy_tip_rounded,
                   children: const [
-                    Text("Your data is securely protected."),
+                    Text(
+                      "Only your basic sign-in information is stored to manage your account.",
+                    ),
                     SizedBox(height: 2),
-                    Text("Chat history is stored for a better experience."),
+                    Text(
+                      "Your chats and prompts are not stored on our servers.",
+                    ),
                     SizedBox(height: 2),
-                    Text("We never share your personal information."),
+                    Text(
+                      "Your privacy is important to us, and your personal information is never shared with third parties.",
+                    ),
                   ],
                 ),
                 ProfileTile(
