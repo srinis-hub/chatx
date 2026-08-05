@@ -22,6 +22,30 @@
           }
         },
         {
+          "client_id": "686870364430-94co9urv9dt7roq36vos0mr0da9tf8tj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vallarasu.chatx",
+            "certificate_hash": "c62f796fe8fdf587247c71176ee7936ccf5348f4"
+          }
+        },
+        {
+          "client_id": "686870364430-e7rgfcdnefjnf2l7ha7u7k72e89g8i3d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vallarasu.chatx",
+            "certificate_hash": "c707f5b8af39e23e402d5405eb6a0277f0252db9"
+          }
+        },
+        {
+          "client_id": "686870364430-q2abv05t0cpm52a1jcbhrtfgj52a99i5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vallarasu.chatx",
+            "certificate_hash": "ac579d7de474df6d2366fde9a98cad282c9c75c8"
+          }
+        },
+        {
           "client_id": "686870364430-vikpien4shbu81hfsh830hjq57etlha8.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

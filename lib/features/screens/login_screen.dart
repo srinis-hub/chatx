@@ -2,6 +2,7 @@ import 'package:chatx/core/media_query.dart';
 import 'package:chatx/core/sevices/google_auth_service.dart';
 import 'package:chatx/features/screens/landing_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -12,7 +13,25 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final GoogleAuthService _authService = GoogleAuthService();
+  bool _isLoading = false;
+  String _version = "";
+  String _buildNumber = "";
+  final GoogleAuthService _authService = GoogleAuthService.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAppVersion();
+  }
+
+  Future<void> _loadAppVersion() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+
+    setState(() {
+      _version = packageInfo.version;
+      _buildNumber = packageInfo.buildNumber;
+    });
+  }
 
   Future<void> openPrivacyPolicy() async {
     final Uri url = Uri.parse(
@@ -102,34 +121,54 @@ class _LoginScreenState extends State<LoginScreen> {
                   width: double.infinity,
                   height: 58,
                   child: ElevatedButton(
-                    onPressed: () async {
-                      try {
-                        final user = await _authService.signInWithGoogle();
+                    onPressed: _isLoading
+                        ? null
+                        : () async {
+                            setState(() {
+                              _isLoading = true;
+                            });
 
-                        if (!mounted) return;
+                            try {
+                              final user = await _authService
+                                  .signInWithGoogle();
 
-                        if (user != null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text("Welcome ${user.displayName}"),
-                            ),
-                          );
+                              if (!mounted) return;
 
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => LandingScreen(user: user),
-                            ),
-                          );
-                        }
-                      } catch (e) {
-                        if (!mounted) return;
+                              if (user != null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      "Welcome ${user.displayName}",
+                                    ),
+                                  ),
+                                );
 
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(SnackBar(content: Text(e.toString())));
-                      }
-                    },
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => LandingScreen(user: user),
+                                  ),
+                                );
+                              }
+                            } catch (e) {
+                              if (!mounted) return;
+
+                              final message = e.toString().replaceFirst(
+                                "Exception: ",
+                                "",
+                              );
+
+                              ScaffoldMessenger.of(
+                                context,
+                              ).showSnackBar(SnackBar(content: Text(message)));
+                            } finally {
+                              if (mounted) {
+                                setState(() {
+                                  _isLoading = false;
+                                });
+                              }
+                            }
+                          },
                     style: ElevatedButton.styleFrom(
                       elevation: 0,
                       backgroundColor: Colors.white,
@@ -139,24 +178,35 @@ class _LoginScreenState extends State<LoginScreen> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          "assets/google.png",
-                          width: context.width(0.06),
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          "Google Sign-in",
-                          style: TextStyle(
-                            fontSize: context.width(0.035),
-                            fontWeight: FontWeight.bold,
+                    child: _isLoading
+                        ? SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Theme.of(context).primaryColor,
+                              ),
+                            ),
+                          )
+                        : Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                "assets/google.png",
+                                width: context.width(0.06),
+                              ),
+                              const SizedBox(width: 12),
+                              Text(
+                                "Google Sign-in",
+                                style: TextStyle(
+                                  fontSize: context.width(0.035),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -171,6 +221,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 Text(
                   'Secure • Fast • Private',
                   style: TextStyle(color: Colors.black),
+                ),
+
+                const SizedBox(height: 4),
+                Text(
+                  "Version $_version ($_buildNumber)",
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 11, color: Colors.grey),
                 ),
               ],
             ),

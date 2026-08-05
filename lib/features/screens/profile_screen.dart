@@ -20,7 +20,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   bool isPrimeUser = false;
 
-  final GoogleAuthService authService = GoogleAuthService();
+  final GoogleAuthService _authService = GoogleAuthService.instance;
 
   @override
   void initState() {
@@ -227,7 +227,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       height: 55,
                       child: ElevatedButton.icon(
                         onPressed: () async {
-                          await authService.signOut();
+                          await _authService.signOut();
 
                           Navigator.pushAndRemoveUntil(
                             context,
